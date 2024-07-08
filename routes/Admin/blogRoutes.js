@@ -8,8 +8,8 @@ const Role = require('../../models/Role'); // Assuming you have a Role model
 
 const router = express.Router();
 
-// const uploadDirectory = '/var/www/html/tss_files/catalog';
-const uploadDirectory = 'uploads';
+const uploadDirectory = '/var/www/mycarelabs';
+// const uploadDirectory = 'uploads';
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, uploadDirectory);
@@ -65,7 +65,7 @@ router.post('/', upload.single('banner_image'), async (req, res) => {
     
     const uniqueFileName = req.file.filename;
     if (req.file) {
-        catalogData.banner_image =`http://64.227.186.165/tss_files/banner/${uniqueFileName}`
+        catalogData.banner_image =`https://backend.mycaretrading.com/mycarelabs/${uniqueFileName}`
       }
     
 
@@ -113,7 +113,7 @@ router.put('/:id', upload.single('banner_image'), async (req, res) => {
 
     if(req?.file?.filename){
         const filename = req.file.filename; 
-        catalogData.banner_image =`http://64.227.186.165/tss_files/banner/${filename}`
+        catalogData.banner_image =`https://backend.mycaretrading.com/mycarelabs/${filename}`
       }
 
     const updatedBlog = await Blog.findByIdAndUpdate(req.params.id, catalogData, { new: true });
