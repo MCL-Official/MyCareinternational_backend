@@ -32,14 +32,14 @@ const sendContactForm = async (formDetails) => {
 };
 
 router.post('/api/registerform', async (req, res) => {
-    const { name, email, message } = req.body;
+    const { name, email, message, phnone } = req.body;
 
-    if (!name || !email || !message) {
+    if (!name || !email || !message || !phnone) {
         return res.status(400).json({ error: 'All fields are required' });
     }
 
     try {
-        await sendContactForm({ name, email, message });
+        await sendContactForm({ name, email, phnone, message });
         res.status(200).json({ message: 'Contact form details sent successfully' });
     } catch (error) {
         res.status(500).json({ error: 'Error sending contact form details' });
