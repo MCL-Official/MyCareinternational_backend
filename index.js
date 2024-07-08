@@ -47,6 +47,7 @@ const Orders = require("./routes/Client/Orders.js");
 const promotions= require("./routes/Client/promotionroutes.js");
 const blogRoutes = require('./routes/Admin/blogRoutes');
 const appointmentRoutes = require('./routes/Admin/appointmentRoutes');
+const PortalRoutes = require('./routes/Portal/adminRoutes');
 
 ConnectToMongo();
 const app = express();
@@ -59,6 +60,9 @@ app.use(cors(corsOptions));
 const server = http.createServer(app); // Create an HTTP server
 
 app.use(express.json());
+
+
+app.use("/portal/admin", PortalRoutes); 
 
 app.use("/admin/user", userRoutes);
 app.use("/admin/admin", adminRoutes);
