@@ -79,17 +79,27 @@ router.post('/', upload.single('banner_image'), async (req, res) => {
     res.status(500).json({ message: 'Internal Server Error' });
   }
 });
-
-// Read all blogs
+// Read all blogs with pagination
 router.get('/', async (req, res) => {
   try {
-    const blogs = await Blog.find();
-    res.status(200).json(blogs);
+    const page = parseInt(req.query.page) || 1; // Default to page 1 if not provided
+    const limit = parseInt(req.query.limit) || 9; // Default to 9 blogs per page if not provided
+    const skip = (page - 1) * limit;
+
+    const totalBlogs = await Blog.countDocuments(); // Get total number of blogs
+    const blogs = await Blog.find().skip(skip).limit(limit); // Get paginated blogs
+
+    res.status(200).json({
+      blogs,
+      currentPage: page,
+      totalPages: Math.ceil(totalBlogs / limit),
+    });
   } catch (error) {
     console.error('Error fetching blogs:', error);
     res.status(500).json({ message: 'Internal Server Error' });
   }
 });
+
 
 // Read a single blog by ID
 router.get('/:id', async (req, res) => {
