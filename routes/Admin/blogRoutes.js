@@ -80,7 +80,7 @@ router.post('/', upload.single('banner_image'), async (req, res) => {
   }
 });
 // Read all blogs with pagination
-router.get('/', async (req, res) => {
+router.get('/working', async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1; // Default to page 1 if not provided
     const limit = parseInt(req.query.limit) || 9; // Default to 9 blogs per page if not provided
