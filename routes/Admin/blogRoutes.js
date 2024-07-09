@@ -100,6 +100,16 @@ router.get('/working', async (req, res) => {
   }
 });
 
+router.get('/', async (req, res) => {
+  try {
+    const blogs = await Blog.find();
+    res.status(200).json(blogs);
+  } catch (error) {
+    console.error('Error fetching blogs:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
+
 
 // Read a single blog by ID
 router.get('/:id', async (req, res) => {
