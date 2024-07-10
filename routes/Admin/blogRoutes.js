@@ -8,6 +8,7 @@ const Role = require('../../models/Role'); // Assuming you have a Role model
 const router = express.Router();
 
 const uploadDirectory = '/var/www/mycarelabs';
+// const uploadDirectory = '/uploads';
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, uploadDirectory);
@@ -59,11 +60,18 @@ async function authenticate(req, res, next) {
 router.post('/', upload.single('banner_image'), async (req, res) => {
   try {
     const catalogData = req.body;
-    const uniqueFileName = req.file.filename;
-    if (req.file) {
-      catalogData.banner_image = `https://backend.mycaretrading.com/mycarelabs/${uniqueFileName}`;
-    }
-
+    // const uniqueFileName = req.file.filename;
+    // if (req.file) {
+    //   catalogData.banner_image = `https://backend.mycaretrading.com/mycarelabs/${uniqueFileName}`;
+    // }
+    const formattedBlogName = catalogData.meta_title
+    .replace(/\s+|\|+|\.|,|:/g, '-') // Replaces spaces, pipes, dots, commas, and colons with hyphens
+    .replace(/-+/g, '-') // Removes consecutive hyphens
+    .toLowerCase();
+  const encodedBlogName = encodeURIComponent(formattedBlogName);
+  console.log('Navigating to:', `/readBlog/${encodedBlogName}`);
+ catalogData.routename=encodedBlogName;
+// console.log(catalogData);
     const newBlog = new Blog(catalogData);  
     await newBlog.save();
 
@@ -158,6 +166,39 @@ router.get('/:id', async (req, res) => {
     if (!blog) {
       return res.status(404).json({ message: 'Blog not found' });
     }
+    const formattedBlogName = blog.meta_title
+    .replace(/\s+|\|+|\.|,|:/g, '-') // Replaces spaces, pipes, dots, commas, and colons with hyphens
+    .replace(/-+/g, '-') // Removes consecutive hyphens
+    .toLowerCase();
+  const encodedBlogName = encodeURIComponent(formattedBlogName);
+  console.log('Navigating to:', `/readBlog/${encodedBlogName}`);
+    blog.views += 1;
+    if(!blog.routename){
+blog.routename=encodedBlogName;
+    }
+    await blog.save();
+    res.status(200).json(blog);
+  } catch (error) {
+    console.error('Error fetching blog:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
+
+
+
+
+
+
+
+router.get('/routename/:routename', async (req, res) => {
+  try {
+    console.log(req.params.routename);
+    const blog = await Blog.findOne({routename:req.params.routename});
+    if (!blog) {
+      return res.status(404).json({ message: 'Blog not found' });
+    }
+  
+  // console.log('Navigating to:', `/readBlog/${encodedBlogName}`);
     blog.views += 1;
     await blog.save();
     res.status(200).json(blog);

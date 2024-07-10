@@ -15,7 +15,9 @@ const blogSchema = new mongoose.Schema({
   tags: { type: [String], required: true },
   status: { type: String, required: true },
   banner_image: { type: String },
+  routename:{type:String},
   views: { type: Number, default: 0 }, // New field for tracking views
 }, { timestamps: true });
+
 
 module.exports = mongoose.model('Blog', blogSchema);
