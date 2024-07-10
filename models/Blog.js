@@ -1,4 +1,3 @@
-// models/Blog.js
 const mongoose = require('mongoose');
 
 const blogSchema = new mongoose.Schema({
@@ -15,7 +14,8 @@ const blogSchema = new mongoose.Schema({
   category: { type: String, required: true },
   tags: { type: [String], required: true },
   status: { type: String, required: true },
-  banner_image: { type: String},
+  banner_image: { type: String },
+  views: { type: Number, default: 0 }, // New field for tracking views
 }, { timestamps: true });
 
 module.exports = mongoose.model('Blog', blogSchema);

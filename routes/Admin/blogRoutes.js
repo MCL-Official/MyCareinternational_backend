@@ -1,4 +1,3 @@
-// routes/blogRoutes.js
 const express = require('express');
 const multer = require('multer');
 const path = require('path');
@@ -9,7 +8,6 @@ const Role = require('../../models/Role'); // Assuming you have a Role model
 const router = express.Router();
 
 const uploadDirectory = '/var/www/mycarelabs';
-// const uploadDirectory = 'uploads';
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, uploadDirectory);
@@ -61,14 +59,10 @@ async function authenticate(req, res, next) {
 router.post('/', upload.single('banner_image'), async (req, res) => {
   try {
     const catalogData = req.body;
-    // const files = req.files;
-    
     const uniqueFileName = req.file.filename;
     if (req.file) {
-        catalogData.banner_image =`https://backend.mycaretrading.com/mycarelabs/${uniqueFileName}`
-      }
-    
-
+      catalogData.banner_image = `https://backend.mycaretrading.com/mycarelabs/${uniqueFileName}`;
+    }
 
     const newBlog = new Blog(catalogData);  
     await newBlog.save();
@@ -79,15 +73,16 @@ router.post('/', upload.single('banner_image'), async (req, res) => {
     res.status(500).json({ message: 'Internal Server Error' });
   }
 });
+
 // Read all blogs with pagination
 router.get('/working', async (req, res) => {
   try {
-    const page = parseInt(req.query.page) || 1; // Default to page 1 if not provided
-    const limit = parseInt(req.query.limit) || 9; // Default to 9 blogs per page if not provided
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 9;
     const skip = (page - 1) * limit;
 
-    const totalBlogs = await Blog.countDocuments(); // Get total number of blogs
-    const blogs = await Blog.find().skip(skip).limit(limit); // Get paginated blogs
+    const totalBlogs = await Blog.countDocuments();
+    const blogs = await Blog.find().skip(skip).limit(limit);
 
     res.status(200).json({
       blogs,
@@ -96,20 +91,54 @@ router.get('/working', async (req, res) => {
     });
   } catch (error) {
     console.error('Error fetching blogs:', error);
-    res.status(500).json({ message: 'Internal Server Error',error });
+    res.status(500).json({ message: 'Internal Server Error', error });
   }
 });
 
-router.get('/', async (req, res) => {
+// Fetch random 4 blogs
+router.get('/random', async (req, res) => {
   try {
-    const blogs = await Blog.find();
+    const blogs = await Blog.aggregate([{ $sample: { size: 4 } }]);
     res.status(200).json(blogs);
   } catch (error) {
-    console.error('Error fetching blogs:', error);
+    console.error('Error fetching random blogs:', error);
     res.status(500).json({ message: 'Internal Server Error' });
   }
 });
 
+// Fetch latest 4 articles
+router.get('/latest', async (req, res) => {
+  try {
+    const blogs = await Blog.find().sort({ createdAt: -1 }).limit(4);
+    res.status(200).json(blogs);
+  } catch (error) {
+    console.error('Error fetching latest blogs:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
+
+// Fetch 4 blogs from the same category
+router.get('/category/:category', async (req, res) => {
+  try {
+    const category = req.params.category;
+    const blogs = await Blog.find({ category }).limit(4);
+    res.status(200).json(blogs);
+  } catch (error) {
+    console.error('Error fetching category blogs:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
+
+// Fetch 4 most popular blogs (assuming popularity is determined by 'views')
+router.get('/popular', async (req, res) => {
+  try {
+    const blogs = await Blog.find().sort({ views: -1 }).limit(4);
+    res.status(200).json(blogs);
+  } catch (error) {
+    console.error('Error fetching popular blogs:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
 
 // Read a single blog by ID
 router.get('/:id', async (req, res) => {
@@ -118,6 +147,8 @@ router.get('/:id', async (req, res) => {
     if (!blog) {
       return res.status(404).json({ message: 'Blog not found' });
     }
+    blog.views += 1;
+    await blog.save();
     res.status(200).json(blog);
   } catch (error) {
     console.error('Error fetching blog:', error);
@@ -129,12 +160,11 @@ router.get('/:id', async (req, res) => {
 router.put('/:id', upload.single('banner_image'), async (req, res) => {
   try {
     const catalogData = req.body;
-    // const files = req.files;
 
-    if(req?.file?.filename){
-        const filename = req.file.filename; 
-        catalogData.banner_image =`https://backend.mycaretrading.com/mycarelabs/${filename}`
-      }
+    if (req?.file?.filename) {
+      const filename = req.file.filename;
+      catalogData.banner_image = `https://backend.mycaretrading.com/mycarelabs/${filename}`;
+    }
 
     const updatedBlog = await Blog.findByIdAndUpdate(req.params.id, catalogData, { new: true });
     if (!updatedBlog) {
