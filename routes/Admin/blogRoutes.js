@@ -96,7 +96,7 @@ router.get('/working', async (req, res) => {
     });
   } catch (error) {
     console.error('Error fetching blogs:', error);
-    res.status(500).json({ message: 'Internal Server Error' });
+    res.status(500).json({ message: 'Internal Server Error',error });
   }
 });
 
