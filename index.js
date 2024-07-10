@@ -142,6 +142,10 @@ io.on("connection", (socket) => {
   });
 });
 
+app.get('/harshtesting',(req,res)=>{
+  return res.send(":helcljcjbjkvbj")
+})
+
 server.listen(3005, () => {
   console.log("SERVER IS RUNNING");
 });
