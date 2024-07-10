@@ -129,6 +129,17 @@ router.get('/category/:category', async (req, res) => {
   }
 });
 
+
+router.get('/', async (req, res) => {
+  try {
+    const blogs = await Blog.find();
+    res.status(200).json(blogs);
+  } catch (error) {
+    console.error('Error fetching blogs:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
+
 // Fetch 4 most popular blogs (assuming popularity is determined by 'views')
 router.get('/popular', async (req, res) => {
   try {
