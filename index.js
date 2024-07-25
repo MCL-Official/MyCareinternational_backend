@@ -46,6 +46,7 @@ const Stripe = require("./routes/Client/Stripe.js");
 const Orders = require("./routes/Client/Orders.js");
 const promotions= require("./routes/Client/promotionroutes.js");
 const blogRoutes = require('./routes/Admin/blogRoutes');
+const blogRoutesTrading = require('./routes/Admin/BlogRouteTrading.js');
 const appointmentRoutes = require('./routes/Admin/appointmentRoutes');
 const PortalRoutes = require('./routes/Portal/adminRoutes');
 
@@ -90,6 +91,7 @@ app.use("/admin/transactions", transactionRoutes);
 app.use("/admin/looks", looksRoutes);
 app.use("/admin/page", pageController);
 app.use("/admin/blog", blogRoutes);
+app.use("/admin/blog/trading", blogRoutesTrading);
 app.use('/admin/appointments', appointmentRoutes);
 
 //clients-Routes
