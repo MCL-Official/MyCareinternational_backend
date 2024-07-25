@@ -138,8 +138,9 @@ router.get('/category/:category', async (req, res) => {
 });
 
 
-router.get('/', async (req, res) => {
+router.get('/data11', async (req, res) => {
   try {
+    console.log("khbvhjbvd");
     const blogs = await Blog.find();
     res.status(200).json(blogs);
   } catch (error) {
