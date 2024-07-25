@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const blogSchema = new mongoose.Schema({
+const blogSchema1 = new mongoose.Schema({
   name: { type: String, required: true },
   meta_title: { type: String, required: true },
   meta_tags: { type: String, required: true },
@@ -20,4 +20,4 @@ const blogSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 
-module.exports = mongoose.model('BlogTrading', blogSchema);
+module.exports = mongoose.model('BlogTrading', blogSchema1);
