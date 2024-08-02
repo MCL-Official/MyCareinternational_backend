@@ -60,19 +60,15 @@ async function authenticate(req, res, next) {
 router.post('/', upload.single('banner_image'), async (req, res) => {
   try {
     const catalogData = req.body;
-    // const uniqueFileName = req.file.filename;
-    // if (req.file) {
-    //   catalogData.banner_image = `https://backend.mycaretrading.com/mycarelabs/${uniqueFileName}`;
-    // }
     const formattedBlogName = catalogData.meta_title
-    .replace(/\s+|\|+|\.|,|:/g, '-') // Replaces spaces, pipes, dots, commas, and colons with hyphens
-    .replace(/-+/g, '-') // Removes consecutive hyphens
-    .toLowerCase();
-  const encodedBlogName = encodeURIComponent(formattedBlogName);
-  console.log('Navigating to:', `/readBlog/${encodedBlogName}`);
- catalogData.routename=encodedBlogName;
-// console.log(catalogData);
-    const newBlog = new Blog(catalogData);  
+      .replace(/\s+|\|+|\.|,|:/g, '-') // Replaces spaces, pipes, dots, commas, and colons with hyphens
+      .replace(/-+/g, '-') // Removes consecutive hyphens
+      .toLowerCase();
+    const encodedBlogName = encodeURIComponent(formattedBlogName);
+    console.log('Navigating to:', `/readBlog/${encodedBlogName}`);
+    catalogData.routename = encodedBlogName;
+
+    const newBlog = new Blog(catalogData);
     await newBlog.save();
 
     res.status(201).json({ message: 'Blog created successfully', newBlog });
@@ -137,7 +133,6 @@ router.get('/category/:category', async (req, res) => {
   }
 });
 
-
 router.get('/', async (req, res) => {
   try {
     const blogs = await Blog.find();
@@ -167,14 +162,14 @@ router.get('/:id', async (req, res) => {
       return res.status(404).json({ message: 'Blog not found' });
     }
     const formattedBlogName = blog.meta_title
-    .replace(/\s+|\|+|\.|,|:/g, '-') // Replaces spaces, pipes, dots, commas, and colons with hyphens
-    .replace(/-+/g, '-') // Removes consecutive hyphens
-    .toLowerCase();
-  const encodedBlogName = encodeURIComponent(formattedBlogName);
-  console.log('Navigating to:', `/readBlog/${encodedBlogName}`);
+      .replace(/\s+|\|+|\.|,|:/g, '-') // Replaces spaces, pipes, dots, commas, and colons with hyphens
+      .replace(/-+/g, '-') // Removes consecutive hyphens
+      .toLowerCase();
+    const encodedBlogName = encodeURIComponent(formattedBlogName);
+    console.log('Navigating to:', `/readBlog/${encodedBlogName}`);
     blog.views += 1;
-    if(!blog.routename){
-blog.routename=encodedBlogName;
+    if (!blog.routename) {
+      blog.routename = encodedBlogName;
     }
     await blog.save();
     res.status(200).json(blog);
@@ -184,26 +179,43 @@ blog.routename=encodedBlogName;
   }
 });
 
-
-
-
-
-
-
 router.get('/routename/:routename', async (req, res) => {
   try {
     console.log(req.params.routename);
-    const blog = await Blog.findOne({routename:req.params.routename});
+    const blog = await Blog.findOne({ routename: req.params.routename });
     if (!blog) {
       return res.status(404).json({ message: 'Blog not found' });
     }
-  
-  // console.log('Navigating to:', `/readBlog/${encodedBlogName}`);
+
     blog.views += 1;
     await blog.save();
     res.status(200).json(blog);
   } catch (error) {
     console.error('Error fetching blog:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
+
+// **New API Endpoint: Search Blogs by Name**
+router.get('/search/:name', async (req, res) => {
+  try {
+    const { name } = req.params;
+
+    if (!name) {
+      return res.status(400).json({ message: 'Bad Request: Missing name parameter' });
+    }
+
+    const blogs = await Blog.find({
+      name: { $regex: name, $options: 'i' } // Case-insensitive search
+    });
+
+    if (blogs.length === 0) {
+      return res.status(404).json({ message: 'No blogs found matching the name' });
+    }
+
+    res.status(200).json(blogs);
+  } catch (error) {
+    console.error('Error searching for blogs:', error);
     res.status(500).json({ message: 'Internal Server Error' });
   }
 });
