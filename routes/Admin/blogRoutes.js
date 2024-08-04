@@ -99,6 +99,18 @@ router.get('/working', async (req, res) => {
   }
 });
 
+
+router.get('/top-blogs', async (req, res) => {
+  try {
+    const limit = parseInt(req.query.limit) || 10; // Limit the number of blogs to fetch
+    const topBlogs = await Blog.find().sort({ views: -1 }).limit(limit);
+    
+    res.status(200).json(topBlogs);
+  } catch (error) {
+    console.error('Error fetching top blogs:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
 // Fetch random 4 blogs
 router.get('/random', async (req, res) => {
   try {
