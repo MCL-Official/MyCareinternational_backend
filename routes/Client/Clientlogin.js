@@ -364,7 +364,7 @@ router.post('/Login',checkAdminLogin,upload.none(), async (req, res) => {
         }
 
         // Generate and return an authentication token
-        const authToken = jwt.sign({ userId: user._id }, 'your-secret-key', { expiresIn: '1h' });
+        const authToken = jwt.sign({ userId: user._id }, 'your-secret-key');
 
         res.status(200).json({ message: 'Sign-in successful', authToken,mid:user.mid });
     } catch (error) {
