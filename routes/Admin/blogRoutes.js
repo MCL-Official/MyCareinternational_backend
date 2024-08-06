@@ -86,7 +86,8 @@ router.get('/working', async (req, res) => {
     const skip = (page - 1) * limit;
 
     const totalBlogs = await Blog.countDocuments();
-    const blogs = await Blog.find().skip(skip).limit(limit);
+    // Sort blogs by createdAt in descending order
+    const blogs = await Blog.find().sort({ createdAt: -1 }).skip(skip).limit(limit);
 
     res.status(200).json({
       blogs,
