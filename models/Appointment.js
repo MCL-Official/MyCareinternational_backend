@@ -33,6 +33,18 @@ const AppointmentSchema = new mongoose.Schema({
     type: String,
     // required: true,
   },
+  Employee: {
+    type: String,
+    // required: true,
+  },
+  Location: {
+    type: String,
+    // required: true,
+  },
+  Service: {
+    type: String,
+    // required: true,
+  },
   foundVia: {
     type: String,
     // required: true,
