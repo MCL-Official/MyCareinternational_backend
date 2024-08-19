@@ -21,6 +21,9 @@ const sendContactForm = async (formDetails) => {
             Name: ${formDetails.name}
             Email: ${formDetails.email}
             Message: ${formDetails.message}
+            Phone: ${formDetails.phone}
+            company: ${formDetails.company}
+            agreeToTerms: ${formDetails.agreeToTerms}
         `,
     };
 
