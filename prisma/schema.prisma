@@ -1,0 +1,42 @@
+// prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = "mongodb+srv://harsh:Harsh9945khosla@cluster0.osfevs6.mongodb.net/Photoshoot"
+}
+
+model Job {
+  id                       String       @id @default(auto()) @map("_id") @db.ObjectId
+  companyLogo              String
+  title                    String
+  company                  String
+  type                     String
+  salary                   String
+  experience               String
+  postedTime               String
+  location                 String
+  skills                   String[]     @default([])
+  description              String
+  responsibilities         String
+  requirements             String
+  eligibleDegrees          String[]
+  eligibleGraduationYears  String
+  documentsRequired        String
+  jobRound                 String
+  applicants               String[]     @default([])  // Array of applicant IDs
+  createdAt                DateTime     @default(now())
+  updatedAt                DateTime     @updatedAt
+}
+
+model Applicant {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  email       String   // Ensure this is not unique
+  resume      String
+  jobs        String[] @default([])  // Array of job IDs
+  appliedAt   DateTime @default(now())
+}
