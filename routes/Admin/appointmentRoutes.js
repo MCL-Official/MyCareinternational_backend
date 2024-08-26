@@ -2,38 +2,6 @@ const express = require('express');
 const router = express.Router();
 const Appointment = require('../../models/Appointment');
 
-
-
-
-router.get('/daily-bookings', async (req, res) => {
-  try {
-    const { employee, location } = req.query;
-
-    // Build the filter criteria
-    let filter = {};
-    if (employee) filter.Employee = employee;
-    if (location) filter.Location = location;
-
-    const dailyBookings = await Appointment.aggregate([
-      { $match: filter },
-      {
-        $group: {
-          _id: {
-            year: { $year: "$date" },
-            month: { $month: "$date" },
-            day: { $dayOfMonth: "$date" },
-          },
-          count: { $sum: 1 }
-        }
-      },
-      { $sort: { "_id.year": 1, "_id.month": 1, "_id.day": 1 } }
-    ]);
-
-    res.json(dailyBookings);
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch daily bookings' });
-  }
-});
 // Create a new appointment
 router.post('/', async (req, res) => {
   try {

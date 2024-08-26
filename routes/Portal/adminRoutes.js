@@ -14,7 +14,8 @@ const transporter = nodemailer.createTransport({
 const sendContactForm = async (formDetails) => {
     const mailOptions = {
         from: "Harshkhosla9945@gmail.com",
-        to: "info@mycaretrading.com",
+        // to: "info@mycaretrading.com",
+        to: "admin@mycarelabs.com",
         subject: 'Contact Form Submission',
         text: `
             Name: ${formDetails.name}
@@ -35,14 +36,14 @@ const sendContactForm = async (formDetails) => {
 };
 
 router.post('/api/registerform', async (req, res) => {
-    const { name, email, message, phone } = req.body;
+    const { name, email, message, phone, agreeToTerms, company} = req.body;
 
-    if (!name || !email || !message || !phone) {
+    if (!name || !email ) {
         return res.status(400).json({ error: 'All fields are required' });
     }
 
     try {
-        await sendContactForm({ name, email, phone, message });
+        await sendContactForm({ name, email, phone, message , agreeToTerms, company });
         res.status(200).json({ message: 'Contact form details sent successfully' });
     } catch (error) {
         res.status(500).json({ error: 'Error sending contact form details' });
