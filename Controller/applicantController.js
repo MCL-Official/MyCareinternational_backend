@@ -5,7 +5,6 @@ const applyForJob = async (req, res) => {
   const {
     name,
     email,
-    resume,
     phoneNumber,
     coverLetter,
     jobId,
@@ -16,10 +15,17 @@ const applyForJob = async (req, res) => {
     college
   } = req.body;
 
+  // The resume file path should be taken from req.file if multer successfully uploaded it
+  const resume = req.file ? req.file.path : null;
+
   console.log("Received application data:", req.body);
 
   if (!jobId) {
     return res.status(400).json({ error: "Job ID is required" });
+  }
+
+  if (!resume) {
+    return res.status(400).json({ error: "Resume is required" });
   }
 
   try {
@@ -35,7 +41,7 @@ const applyForJob = async (req, res) => {
 
     if (applicant) {
       applicant.name = name;
-      applicant.resume = resume;
+      applicant.resume = resume; // Update with the resume file path
       applicant.phoneNumber = phoneNumber;
       applicant.coverLetter = coverLetter;
       applicant.location = location;
@@ -48,7 +54,7 @@ const applyForJob = async (req, res) => {
       applicant = new Applicant({
         name,
         email,
-        resume,
+        resume, // Set the resume file path
         phoneNumber,
         coverLetter,
         location,
@@ -71,6 +77,7 @@ const applyForJob = async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 };
+
 
 const getApplicantsForJob = async (req, res) => {
   const { jobId } = req.params;
