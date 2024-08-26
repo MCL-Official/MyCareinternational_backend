@@ -16,7 +16,12 @@ const applyForJob = async (req, res) => {
   } = req.body;
 
   // The resume file path should be taken from req.file if multer successfully uploaded it
-  const resume = req.file ? req.file.path : null;
+  const uniqueFileName = req.file ? req.file.filename : null;
+
+  // Construct the URL where the resume will be accessible
+  const resumeUrl = uniqueFileName ? `https://backend.mycaretrading.com/mycarelabs/${uniqueFileName}` : null;
+
+  console.log("Received application data:", req.body);
 
   console.log("Received application data:", req.body);
 
@@ -41,7 +46,7 @@ const applyForJob = async (req, res) => {
 
     if (applicant) {
       applicant.name = name;
-      applicant.resume = resume; // Update with the resume file path
+      applicant.resume = resumeUrl; // Update with the resume file path
       applicant.phoneNumber = phoneNumber;
       applicant.coverLetter = coverLetter;
       applicant.location = location;
