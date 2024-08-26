@@ -1,5 +1,5 @@
-const { PrismaClient } = require('@prisma/client');
-const prisma = new PrismaClient();
+const Job = require('../models/Jobs/Job'); // Import your Mongoose Job model
+const Applicant = require('../models/Jobs/Applicant'); // Import your Mongoose Applicant model
 
 const applyForJob = async (req, res) => {
   const {
@@ -23,37 +23,47 @@ const applyForJob = async (req, res) => {
   }
 
   try {
-    const job = await prisma.job.findUnique({ where: { id: jobId } });
+    const job = await Job.findById(jobId);
     if (!job) {
       return res.status(404).json({ error: "Job not found" });
     }
 
-    let applicant = await prisma.applicant.findFirst({ where: { email } });
+    let applicant = await Applicant.findOne({ email });
     if (applicant && applicant.jobs.includes(jobId)) {
       return res.status(400).json({ error: "You have already applied for this job." });
     }
 
     if (applicant) {
-      applicant = await prisma.applicant.update({
-        where: { id: applicant.id },
-        data: {
-          name, email, resume, phoneNumber, coverLetter, location, gender, education, address, college,
-          jobs: { push: jobId },
-        },
-      });
+      applicant.name = name;
+      applicant.resume = resume;
+      applicant.phoneNumber = phoneNumber;
+      applicant.coverLetter = coverLetter;
+      applicant.location = location;
+      applicant.gender = gender;
+      applicant.education = education;
+      applicant.address = address;
+      applicant.college = college;
+      applicant.jobs.push(jobId);
     } else {
-      applicant = await prisma.applicant.create({
-        data: {
-          name, email, resume, phoneNumber, coverLetter, location, gender, education, address, college,
-          jobs: [jobId],
-        },
+      applicant = new Applicant({
+        name,
+        email,
+        resume,
+        phoneNumber,
+        coverLetter,
+        location,
+        gender,
+        education,
+        address,
+        college,
+        jobs: [jobId],
       });
     }
 
-    await prisma.job.update({
-      where: { id: jobId },
-      data: { applicants: { push: applicant.id } },
-    });
+    await applicant.save();
+
+    job.applicants.push(applicant._id);
+    await job.save();
 
     res.status(201).json(applicant);
   } catch (error) {
@@ -70,13 +80,13 @@ const getApplicantsForJob = async (req, res) => {
   }
 
   try {
-    const job = await prisma.job.findUnique({ where: { id: jobId } });
+    const job = await Job.findById(jobId);
     if (!job) {
       return res.status(404).json({ error: 'Job not found' });
     }
 
-    const applicants = await prisma.applicant.findMany({
-      where: { id: { in: job.applicants } },
+    const applicants = await Applicant.find({
+      _id: { $in: job.applicants },
     });
 
     res.json(applicants);
@@ -94,12 +104,15 @@ const getJobsForApplicant = async (req, res) => {
   }
 
   try {
-    const applicant = await prisma.applicant.findUnique({ where: { id: applicantId } });
+    const applicant = await Applicant.findById(applicantId);
     if (!applicant) {
       return res.status(404).json({ error: 'Applicant not found' });
     }
 
-    const jobs = await prisma.job.findMany({ where: { id: { in: applicant.jobs } } });
+    const jobs = await Job.find({
+      _id: { $in: applicant.jobs },
+    });
+
     res.json(jobs);
   } catch (error) {
     console.error('Error fetching jobs for applicant:', error);

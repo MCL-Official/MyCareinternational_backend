@@ -48,6 +48,8 @@ const promotions= require("./routes/Client/promotionroutes.js");
 const blogRoutes = require('./routes/Admin/blogRoutes');
 const blogRoutesTrading = require('./routes/Admin/BlogRouteTrading.js');
 const appointmentRoutes = require('./routes/Admin/appointmentRoutes');
+const PortalRoutes1 = require('./routes/Jobs/jobRoutes.js');
+const applicantRoutes = require('./routes/Jobs/applicantRoutes.js');
 const PortalRoutes = require('./routes/Portal/adminRoutes');
 
 ConnectToMongo();
@@ -110,6 +112,12 @@ app.use("/client/contacts", contact);
 app.use("/client", Stripe);
 app.use("/client/orders", Orders);
 app.use("/client", promotions);
+
+
+
+// Jobs portal???
+app.use('/jobs/admin', PortalRoutes1);
+app.use('/applicants/admin', applicantRoutes);
 
 // app.use("/client/liked",liked)
 

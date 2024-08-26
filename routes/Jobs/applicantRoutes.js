@@ -7,8 +7,12 @@ const { applyForJob, getApplicantsForJob } = require('../../Controller/applicant
 const router = express.Router();
 
 
+function generateUniqueRid() {
+  return `RID${Date.now()}`;
+}
 
 const uploadDirectory = '/var/www/mycarelabs'; // Ensure this directory exists and is writable
+// const uploadDirectory = 'uploads'; // Ensure this directory exists and is writable
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, uploadDirectory);
