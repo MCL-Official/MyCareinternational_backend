@@ -116,8 +116,8 @@ app.use("/client", promotions);
 
 
 // Jobs portal???
-app.use('/jobs/admin', PortalRoutes1);
-app.use('/applicants/admin', applicantRoutes);
+// app.use('/jobs/admin', PortalRoutes1);
+// app.use('/applicants/admin', applicantRoutes);
 
 
 
