@@ -95,6 +95,7 @@ app.use("/admin/page", pageController);
 app.use("/admin/blog", blogRoutes);
 app.use("/admin/blog/trading", blogRoutesTrading);
 app.use('/admin/appointments', appointmentRoutes);
+// app.use("/admin/appointments", BookingsRouter);
 
 //clients-Routes
 app.use("/client", ClientHome);
