@@ -94,6 +94,11 @@ app.use("/admin/looks", looksRoutes);
 app.use("/admin/page", pageController);
 app.use("/admin/blog", blogRoutes);
 app.use("/admin/blog/trading", blogRoutesTrading);
+
+
+
+
+// booking route
 app.use('/admin/appointments', appointmentRoutes);
 // app.use("/admin/appointments", BookingsRouter);
 
@@ -161,7 +166,7 @@ server.listen(3005, () => {
   console.log("SERVER IS RUNNING");
 });
 
-const PORT = process.env.PORT || 5100;
+const PORT = process.env.PORT || 5001;
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`Server is running onxsdcsdv port ${PORT}`);
 });
