@@ -77,7 +77,7 @@ const sendContactFormIT = async (formDetails) => {
 
 router.post('/api/contact/mycareit', async (req, res) => {
     const { name, email, message, phone, agreeToTerms, company, service } = req.body;
-
+    console.log("Request Body:", req.body); // Debugging
     if (!name || !email) {
         return res.status(400).json({ error: 'All fields are required' });
     }
