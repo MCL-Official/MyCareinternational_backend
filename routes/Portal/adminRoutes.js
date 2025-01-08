@@ -36,14 +36,54 @@ const sendContactForm = async (formDetails) => {
 };
 
 router.post('/api/registerform', async (req, res) => {
-    const { name, email, message, phone, agreeToTerms, company} = req.body;
+    const { name, email, message, phone, agreeToTerms, company } = req.body;
 
-    if (!name || !email ) {
+    if (!name || !email) {
         return res.status(400).json({ error: 'All fields are required' });
     }
 
     try {
-        await sendContactForm({ name, email, phone, message , agreeToTerms, company });
+        await sendContactForm({ name, email, phone, message, agreeToTerms, company });
+        res.status(200).json({ message: 'Contact form details sent successfully' });
+    } catch (error) {
+        res.status(500).json({ error: 'Error sending contact form details' });
+    }
+});
+
+const sendContactFormIT = async (formDetails) => {
+    const mailOptions = {
+        from: "ishandevenda1@gmail.com",
+        // to: "info@mycaretrading.com",
+        to: "info@mycareit.com",
+        subject: 'Contact Form Submission',
+        text: `
+            Name: ${formDetails.name}
+            Email: ${formDetails.email}
+            Message: ${formDetails.message}
+            Phone: ${formDetails.phone}
+            company: ${formDetails.company}
+            service: ${formDetails.service}
+            agreeToTerms: ${formDetails.agreeToTerms}
+        `,
+    };
+
+    try {
+        await transporter.sendMail(mailOptions);
+        console.log('Contact form details sent successfully');
+    } catch (error) {
+        console.error('Error sending contact form details:', error);
+    }
+};
+
+router.post('/api/contact/mycareit', async (req, res) => {
+    const { name, email, message, phone, agreeToTerms, company, service } = req.body;
+
+    if (!name || !email) {
+        return res.status(400).json({ error: 'All fields are required' });
+    }
+
+    try {
+        await sendContactFormIT({ name, email, phone, message, agreeToTerms, company, service });
         res.status(200).json({ message: 'Contact form details sent successfully' });
     } catch (error) {
         res.status(500).json({ error: 'Error sending contact form details' });
