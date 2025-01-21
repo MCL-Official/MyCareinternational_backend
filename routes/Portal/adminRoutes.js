@@ -120,7 +120,6 @@ const sendContactFormNew = async (formDetails) => {
             Message: ${formDetails.message}
             Phone: ${formDetails.phone}
             company: ${formDetails.company}
-            zipcode: ${formDetails.zipcode}
         `,
     };
 
