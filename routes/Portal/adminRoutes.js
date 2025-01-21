@@ -132,14 +132,14 @@ const sendContactFormNew = async (formDetails) => {
 };
 
 router.post('/api/contact/mycarelabs', async (req, res) => {
-    const { name, email, message, phone, company, zipcode } = req.body;
+    const { name, email, message, phone, company } = req.body;
     console.log("Request Body:", req.body); // Debugging
     if (!name || !email) {
         return res.status(400).json({ error: 'All fields are required' });
     }
 
     try {
-        await sendContactFormNew({ name, email, phone, zipcode, message, company });
+        await sendContactFormNew({ name, email, phone, message, company });
         res.status(200).json({ message: 'Contact form details sent successfully' });
     } catch (error) {
         res.status(500).json({ error: 'Error sending contact form details' });
