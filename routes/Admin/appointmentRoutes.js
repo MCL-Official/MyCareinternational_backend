@@ -61,7 +61,8 @@ router.post("/", async (req, res) => {
             Lab: bookingsdata.Lab || "",
             foundVia: bookingsdata.foundVia || "",
             date: bookingsdata.date,
-            time: bookingsdata.time
+            time: bookingsdata.time,
+            Dob:bookingsdata.Dob
         });
 
         await newBooking.save();
