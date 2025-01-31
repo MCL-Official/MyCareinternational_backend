@@ -17,7 +17,7 @@ const uploadDirectory = '/var/www/html/tss_files/home'; // Change the upload dir
 async function convertToExcelFormat(userManagementData) {
     const workbook = new excel.Workbook();
     const worksheet = workbook.addWorksheet('User Management');
-
+    console.log(workbook,'ljdfl')
     // Add headers
     worksheet.addRow(['Username', 'Email', 'Role', 'Status', 'Contact', 'Department', 'Suspended']);
     
