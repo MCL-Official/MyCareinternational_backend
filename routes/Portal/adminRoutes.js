@@ -33,7 +33,7 @@ const sendContactForm = async (formDetails) => {
     const mailOptions = {
         from: "info@mycarelabs.com",
         // to: "info@mycaretrading.com",
-        to: "admin@mycarelabs.com",
+        to: "admin@mycarelabs.com, contactus@mycarelabs.com",
         subject: 'Contact Form Submission',
         text: `
             Name: ${formDetails.name}
@@ -112,7 +112,7 @@ const sendContactFormNew = async (formDetails) => {
     const mailOptions = {
         from: "info@mycarelabs.com",
         // to: "info@mycaretrading.com",
-        to: "admin@mycarelabs.com",
+        to: "admin@mycarelabs.com, contactus@mycarelabs.com",
         subject: 'Contact Form Submission from B2B Landing Page',
         text: `
             Name: ${formDetails.name}

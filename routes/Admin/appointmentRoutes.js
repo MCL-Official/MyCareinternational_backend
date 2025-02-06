@@ -3,6 +3,7 @@ const router = express.Router();
 const CryptoJS = require('crypto-js');
 const Booking = require('../../models/bookingSchema');
 const axios = require('axios');
+const mongoose = require("mongoose");
 
 // Utility function to decrypt data
 const decryptData = (encryptedData) => {
@@ -19,6 +20,94 @@ const maskSensitiveData = (data) => {
         email: data.email ? data.email.replace(/(?<=.).(?=.*@)/g, '*') : '' // Mask email except first and domain parts
     };
 };
+
+router.get("/allbookings", async (req, res) => {
+    try {
+        const { search, date } = req.query;
+        const page = parseInt(req.query.page) || 1;  
+        const limit = 10;  
+        const skip = (page - 1) * limit;  
+
+        let query = {};
+
+        // 🔹 Search filter (Name, Email, Phone)
+        if (search) {
+            query = {
+                $or: [
+                    { firstName: { $regex: search, $options: "i" } },
+                    { lastName: { $regex: search, $options: "i" } },
+                    { email: { $regex: search, $options: "i" } },
+                    { phone: { $regex: search, $options: "i" } }
+                ]
+            };
+        }
+
+        // 🔹 Date filter
+        if (date) {
+            const startOfDay = new Date(date);
+            startOfDay.setHours(0, 0, 0, 0);
+            const endOfDay = new Date(date);
+            endOfDay.setHours(23, 59, 59, 999);
+
+            query.date = { $gte: startOfDay, $lte: endOfDay };
+        }
+
+        const totalBookings = await Booking.countDocuments(query); 
+        const bookings = await Booking.find(query)
+            .sort({ date: -1 }) // Latest bookings first
+            .skip(skip)
+            .limit(limit);
+
+        res.json({
+            success: true,
+            currentPage: page,
+            totalPages: Math.ceil(totalBookings / limit),
+            totalBookings,
+            bookings
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: "Error fetching bookings",
+            error: error.message
+        });
+    }
+});
+
+router.delete("/deletebooking/:id", async (req, res) => {
+    const { id } = req.params;
+
+    // Validate the ID
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(400).json({
+            success: false,
+            message: "Invalid booking ID"
+        });
+    }
+
+    try {
+        const booking = await Booking.findByIdAndDelete(id);
+
+        if (!booking) {
+            return res.status(404).json({
+                success: false,
+                message: "Booking not found"
+            });
+        }
+
+        return res.json({
+            success: true,
+            message: "Booking deleted"
+        });
+    } catch (error) {
+        console.error("Error deleting booking:", error);
+        return res.status(500).json({
+            success: false,
+            message: "Error deleting booking",
+            error: error.message
+        });
+    }
+});
 
 // GET route to fetch bookings based on refId and filter by date
 router.get("/:id", async (req, res) => {
