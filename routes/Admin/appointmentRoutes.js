@@ -24,9 +24,9 @@ const maskSensitiveData = (data) => {
 router.get("/allbookings", async (req, res) => {
     try {
         const { search, date } = req.query;
-        const page = parseInt(req.query.page) || 1;  
-        const limit = 10;  
-        const skip = (page - 1) * limit;  
+        const page = parseInt(req.query.page) || 1;
+        const limit = 10;
+        const skip = (page - 1) * limit;
 
         let query = {};
 
@@ -42,17 +42,22 @@ router.get("/allbookings", async (req, res) => {
             };
         }
 
-        // 🔹 Date filter
+        // 🔹 Date filter (Convert to PST before querying)
         if (date) {
-            const startOfDay = new Date(date);
-            startOfDay.setHours(0, 0, 0, 0);
-            const endOfDay = new Date(date);
-            endOfDay.setHours(23, 59, 59, 999);
-
+            const selectedDate = new Date(date + "T00:00:00.000Z"); // Force UTC interpretation
+        
+            const startOfDay = new Date(selectedDate);
+            startOfDay.setHours(0, 0, 0, 0); // Start of day PST
+        
+            const endOfDay = new Date(selectedDate);
+            endOfDay.setHours(23, 59, 59, 999); // End of day PST
+        
             query.date = { $gte: startOfDay, $lte: endOfDay };
         }
+        
+        
 
-        const totalBookings = await Booking.countDocuments(query); 
+        const totalBookings = await Booking.countDocuments(query);
         const bookings = await Booking.find(query)
             .sort({ date: -1 }) // Latest bookings first
             .skip(skip)
@@ -73,6 +78,7 @@ router.get("/allbookings", async (req, res) => {
         });
     }
 });
+
 
 router.delete("/deletebooking/:id", async (req, res) => {
     const { id } = req.params;
