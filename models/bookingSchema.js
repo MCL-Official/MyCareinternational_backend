@@ -13,7 +13,9 @@ const bookingSchema = new mongoose.Schema({
     foundVia: { type: String },
     date: { type: Date, required: true },
     time: { type: String, required: true },
-    createdAt: { type: Date, default: Date.now }
+    createdAt: { type: Date, default: Date.now },
+    location:{type:String},
+    service:{type:String}
 });
 
 const Booking = mongoose.model('Bookingdetails', bookingSchema);

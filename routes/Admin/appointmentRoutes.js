@@ -157,7 +157,9 @@ router.post("/", async (req, res) => {
             foundVia: bookingsdata.foundVia || "",
             date: bookingsdata.date,
             time: bookingsdata.time,
-            Dob:bookingsdata.Dob
+            Dob:bookingsdata.Dob,
+            location:bookingsdata.location,
+            service:bookingsdata.service
         });
 
         await newBooking.save();
